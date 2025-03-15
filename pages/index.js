@@ -10,22 +10,22 @@ function cleanTitle(title) {
 }
 
 export async function getServerSideProps() {
-  // Import server-only modules inside getServerSideProps
-  const { MongoClient } = await import('mongodb');
-  const axios = (await import('axios')).default;
+  // Use require inside getServerSideProps so that these modules remain server-side.
+  const { MongoClient } = require('mongodb');
+  const axios = require('axios');
 
-  // Connect to MongoDB
+  // Connect to MongoDB using the connection string from environment variables.
   const uri = process.env.MONGO_URI;
   const client = await MongoClient.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-  const db = client.db(); // Uses default DB from connection string
+  const db = client.db(); // Uses default DB from connection string.
   const moviesCollection = db.collection('vjcollection');
   const movies = await moviesCollection.find({}).toArray();
   await client.close();
 
-  // For each movie, call TMDb API to get details (poster, rating, etc.)
+  // For each movie, call the TMDb API to get additional details.
   const tmdbApiKey = process.env.TMDB_API_KEY;
   const moviesWithTMDb = await Promise.all(
     movies.map(async (movie) => {
