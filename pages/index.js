@@ -9,7 +9,7 @@ export default function Home() {
   // Fetch movies (all or via search)
   const fetchMovies = (query = "") => {
     const endpoint = query ? `/search?q=${encodeURIComponent(query)}` : '/movies';
-    fetch(`https://your-backend-domain.com${endpoint}`)
+    fetch(`https://disabled-brenda-godaddy-41a00a2b.koyeb.app${endpoint}`)
       .then((res) => res.json())
       .then((data) => setMovies(data))
       .catch((err) => console.error(err));
