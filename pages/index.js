@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
-import { MongoClient } from 'mongodb';
-import axios from 'axios';
 
 // Helper function to clean up the movie title
 function cleanTitle(title) {
@@ -12,6 +10,10 @@ function cleanTitle(title) {
 }
 
 export async function getServerSideProps() {
+  // Import server-only modules inside getServerSideProps
+  const { MongoClient } = await import('mongodb');
+  const axios = (await import('axios')).default;
+
   // Connect to MongoDB
   const uri = process.env.MONGO_URI;
   const client = await MongoClient.connect(uri, {
@@ -21,8 +23,6 @@ export async function getServerSideProps() {
   const db = client.db(); // Uses default DB from connection string
   const moviesCollection = db.collection('vjcollection');
   const movies = await moviesCollection.find({}).toArray();
-
-  // Close the MongoDB connection
   await client.close();
 
   // For each movie, call TMDb API to get details (poster, rating, etc.)
@@ -46,7 +46,6 @@ export async function getServerSideProps() {
     })
   );
 
-  // Pass the integrated data to the page
   return {
     props: {
       movies: JSON.parse(JSON.stringify(moviesWithTMDb)),
@@ -64,11 +63,11 @@ export default function Home({ movies }) {
       <main className={styles.movieGrid}>
         {movies.map((movie) => {
           const tmdb = movie.tmdb;
-          // TMDb returns a relative poster path; prepend base URL if available.
+          // TMDb returns a relative poster path; prepend the base URL if available.
           const posterUrl =
             tmdb && tmdb.poster_path
               ? `https://image.tmdb.org/t/p/w500${tmdb.poster_path}`
-              : "/default-poster.png"; // Place a fallback image in the public folder
+              : "/default-poster.png"; // Ensure you have a fallback image in your public folder.
           const rating = tmdb && tmdb.vote_average ? tmdb.vote_average : null;
 
           return (
