@@ -5,7 +5,7 @@ export default function Home() {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    fetch('https://your-backend-domain.com/movies')
+    fetch('https://disabled-brenda-godaddy-41a00a2b.koyeb.app/movies')
       .then((res) => res.json())
       .then((data) => setMovies(data))
       .catch((err) => console.error(err));
