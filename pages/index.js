@@ -6,17 +6,27 @@ export default function Home() {
   const [movies, setMovies] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch movies (all or via search)
-  const fetchMovies = (query = "") => {
-    const endpoint = query ? `/search?q=${encodeURIComponent(query)}` : '/movies';
-    fetch(`https://disabled-brenda-godaddy-41a00a2b.koyeb.app${endpoint}`)
-      .then((res) => res.json())
-      .then((data) => setMovies(data))
-      .catch((err) => console.error(err));
+  // Fetch movies from backend
+  const fetchMovies = async (query = "") => {
+    const endpoint = query 
+      ? `/search?q=${encodeURIComponent(query)}` 
+      : '/movies';
+      
+    try {
+      const response = await fetch(`https://disabled-brenda-godaddy-41a00a2b.koyeb.app${endpoint}`);
+      if (response.ok) {
+        const data = await response.json();
+        setMovies(data);
+      } else {
+        console.error("Failed to fetch movies");
+      }
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+    }
   };
 
   useEffect(() => {
-    fetchMovies();
+    fetchMovies(); // Initial fetch when component mounts
   }, []);
 
   const handleSearch = (e) => {
@@ -39,6 +49,8 @@ export default function Home() {
           <button type="submit" className={styles.searchButton}>Search</button>
         </form>
       </header>
+
+      {/* Display movie grid */}
       <main className={styles.movieGrid}>
         {movies.map((movie) => (
           <Link href={`/movie/${movie._id}`} key={movie._id}>
