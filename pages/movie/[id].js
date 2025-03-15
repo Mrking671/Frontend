@@ -6,7 +6,7 @@ export default function Movie() {
 
   if (!id) return null;
 
-  const streamUrl = `https://your-backend-domain.com/stream/${id}`;
+  const streamUrl = `https://disabled-brenda-godaddy-41a00a2b.koyeb.app/stream/${id}`;
 
   return (
     <div style={{ padding: '1rem' }}>
