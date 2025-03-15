@@ -6,7 +6,7 @@ export default function Home() {
   const [movies, setMovies] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch movies from backend
+  // Fetch movies from backend (all or via search)
   const fetchMovies = async (query = "") => {
     const endpoint = query 
       ? `/search?q=${encodeURIComponent(query)}` 
@@ -26,7 +26,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchMovies(); // Initial fetch when component mounts
+    fetchMovies();
   }, []);
 
   const handleSearch = (e) => {
@@ -52,25 +52,34 @@ export default function Home() {
 
       {/* Display movie grid */}
       <main className={styles.movieGrid}>
-        {movies.map((movie) => (
-          <Link href={`/movie/${movie._id}`} key={movie._id}>
-            <a className={styles.movieCard}>
-              <div className={styles.posterContainer}>
-                {movie.omdb && movie.omdb.Poster && movie.omdb.Poster !== "N/A" ? (
-                  <img src={movie.omdb.Poster} alt={movie.file_name} className={styles.poster} />
-                ) : (
-                  <div className={styles.noPoster}>No Image</div>
-                )}
-                {movie.omdb && movie.omdb.imdbRating && (
-                  <div className={styles.rating}>
-                    {movie.omdb.imdbRating} ★
-                  </div>
-                )}
-              </div>
-              <div className={styles.movieTitle}>{movie.file_name}</div>
-            </a>
-          </Link>
-        ))}
+        {movies.map((movie) => {
+          // Use TMDb details if available
+          const tmdb = movie.tmdb;
+          const posterUrl = tmdb && tmdb.poster_path 
+            ? `https://image.tmdb.org/t/p/w500${tmdb.poster_path}`
+            : null;
+          const rating = tmdb && tmdb.vote_average ? tmdb.vote_average : null;
+          
+          return (
+            <Link href={`/movie/${movie._id}`} key={movie._id}>
+              <a className={styles.movieCard}>
+                <div className={styles.posterContainer}>
+                  {posterUrl ? (
+                    <img src={posterUrl} alt={movie.file_name} className={styles.poster} />
+                  ) : (
+                    <div className={styles.noPoster}>No Image</div>
+                  )}
+                  {rating && (
+                    <div className={styles.rating}>
+                      {rating} ★
+                    </div>
+                  )}
+                </div>
+                <div className={styles.movieTitle}>{movie.file_name}</div>
+              </a>
+            </Link>
+          );
+        })}
       </main>
     </div>
   );
