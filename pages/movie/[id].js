@@ -9,7 +9,7 @@ export default function Movie() {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`https://your-backend-domain.com/movie/${id}`)
+    fetch(`https://disabled-brenda-godaddy-41a00a2b.koyeb.app/movie/${id}`)
       .then((res) => res.json())
       .then((data) => setMovie(data))
       .catch((err) => console.error(err));
@@ -30,7 +30,7 @@ export default function Movie() {
       <div className={styles.content}>
         <div className={styles.videoWrapper}>
           <video controls style={{ width: '100%' }}>
-            <source src={`https://your-backend-domain.com/stream/${movie._id}`} type="video/mp4" />
+            <source src={`https://disabled-brenda-godaddy-41a00a2b.koyeb.app/stream/${movie._id}`} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
